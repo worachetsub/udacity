@@ -10,8 +10,18 @@ from FlaskWebProject import app, db
 from FlaskWebProject.forms import LoginForm, PostForm
 from flask_login import current_user, login_user, logout_user, login_required
 from FlaskWebProject.models import User, Post
+from msal import SerializableTokenCache
 import msal
 import uuid
+
+import os
+from flask import redirect, url_for
+from msal import ConfidentialClientApplication, SerializableTokenCache
+
+# Load sensitive information from environment variables or configuration files
+CLIENT_ID = os.getenv('CLIENT_ID', 'your-client-id')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'your-client-secret')
+AUTHORITY = os.getenv('AUTHORITY', 'https://login.microsoftonline.com/your-tenant-id')
 
 imageSourceUrl = 'https://'+ app.config['BLOB_ACCOUNT']  + '.blob.core.windows.net/' + app.config['BLOB_CONTAINER']  + '/'
 
@@ -112,17 +122,47 @@ def logout():
 
 def _load_cache():
     # TODO: Load the cache from `msal`, if it exists
-    cache = None
+
+    cache = SerializableTokenCache()
+    if os.path.exists('token_cache.bin'):
+        with open('token_cache.bin', 'r') as f:
+            cache.deserialize(f.read())
     return cache
 
 def _save_cache(cache):
     # TODO: Save the cache, if it has changed
-    pass
+    if cache.has_state_changed:
+        with open('token_cache.bin', 'w') as f:
+            f.write(cache.serialize())
 
 def _build_msal_app(cache=None, authority=None):
     # TODO: Return a ConfidentialClientApplication
-    return None
+    if cache is None:
+        cache = _load_cache()
+    if authority is None:
+        authority = AUTHORITY
+
+    app = ConfidentialClientApplication(
+        CLIENT_ID,
+        authority=authority,
+        client_credential=CLIENT_SECRET,
+        token_cache=cache
+    )
+    return app
 
 def _build_auth_url(authority=None, scopes=None, state=None):
     # TODO: Return the full Auth Request URL with appropriate Redirect URI
-    return None
+    if authority is None:
+        authority = AUTHORITY
+    if scopes is None:
+        scopes = ['User.Read']
+    
+    redirect_uri = url_for('authorized', _external=True)
+    app = _build_msal_app(authority=authority)
+    
+    auth_url = app.get_authorization_request_url(
+        scopes=scopes,
+        redirect_uri=redirect_uri,
+        state=state
+    )
+    return auth_url
