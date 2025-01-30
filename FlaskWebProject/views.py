@@ -19,7 +19,7 @@ from flask import redirect, url_for
 from msal import ConfidentialClientApplication, SerializableTokenCache
 
 # Load sensitive information from environment variables or configuration files
-CLIENT_ID = os.getenv('CLIENT_ID', 'your-client-id')
+CLIENT_ID = os.getenv('CLIENT_ID', '39b58237-74d8-4ac8-9805-c0e2fb717a10')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'your-client-secret')
 AUTHORITY = os.getenv('AUTHORITY', 'https://login.microsoftonline.com/your-tenant-id')
 
