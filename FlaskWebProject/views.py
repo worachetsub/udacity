@@ -19,9 +19,9 @@ from flask import redirect, url_for
 from msal import ConfidentialClientApplication, SerializableTokenCache
 
 # Load sensitive information from environment variables or configuration files
-CLIENT_ID = os.getenv('CLIENT_ID', '39b58237-74d8-4ac8-9805-c0e2fb717a10')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'your-client-secret')
-AUTHORITY = os.getenv('AUTHORITY', 'https://login.microsoftonline.com/your-tenant-id')
+CLIENT_ID = os.getenv('CLIENT_ID', 'c8b1eedf-fd46-4668-8222-4b97dd626d8a')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'gLV8Q~tttnM5h-gWNE6NgqqCEQOltENr_hc2ncWe')
+AUTHORITY = os.getenv('AUTHORITY', 'https://login.microsoftonline.com/3e0958b6-7c8d-4cfd-8e5e-d621c049f02d')
 
 imageSourceUrl = 'https://'+ app.config['BLOB_ACCOUNT']  + '.blob.core.windows.net/' + app.config['BLOB_CONTAINER']  + '/'
 
